@@ -28,13 +28,20 @@ Abra http://localhost:5173
 | `npm run build` | Build de produção |
 | `npm run preview` | Preview do build |
 
-## GitHub
+## GitHub Pages
 
-Repositório sugerido: `Lenita-Costa/dashboard-s10-jira`
+URL: https://lenita-costa.github.io/dashboard-s10-jira/
+
+No repositório, em **Settings → Pages**:
+
+1. Em **Build and deployment → Source**, escolha **GitHub Actions** (não “Deploy from a branch”).
+2. Cada push na `main` roda o workflow e publica o build do Vite.
+
+> **API Jira no Pages:** o proxy da Anthropic só existe no `npm run dev`. No site publicado o dashboard abre, mas buscar dados do Jira exige rodar localmente ou adicionar um backend depois.
+
+## Git
 
 ```bash
-git remote add origin git@github.com:Lenita-Costa/dashboard-s10-jira.git
-git push -u origin main
+git config core.sshCommand "ssh -F /dev/null"
+git push origin main
 ```
-
-Use SSH com `git config core.sshCommand "ssh -F /dev/null"` se o SSH do sistema der erro de permissão.

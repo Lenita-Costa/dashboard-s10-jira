@@ -5,6 +5,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
+    base: "/dashboard-s10-jira/",
     plugins: [react()],
     server: {
       proxy: {
