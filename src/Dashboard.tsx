@@ -32,6 +32,8 @@ function projColor(key) {
   return projColorCache[key];
 }
 
+const isLocalDev = import.meta.env.DEV;
+
 async function callClaude(prompt) {
   const res = await fetch("/api/anthropic/v1/messages", {
     method:"POST",
@@ -44,6 +46,12 @@ async function callClaude(prompt) {
       mcp_servers:[{ type:"url", url:"https://mcp.atlassian.com/v1/mcp", name:"atlassian" }]
     })
   });
+  const contentType = res.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      "API indisponível neste ambiente. Rode localmente com npm run dev e VITE_ANTHROPIC_API_KEY no .env"
+    );
+  }
   const data = await res.json();
   const texts = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
   const toolResults = (data.content||[]).filter(b=>b.type==="mcp_tool_result");
@@ -67,6 +75,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
 
   const fetchData = useCallback(async () => {
+    if (!isLocalDev) return;
     setLoading(true);
     setError(null);
     try {
@@ -138,7 +147,9 @@ export default function Dashboard() {
     setLoadMsg("");
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    if (isLocalDev) fetchData();
+  }, [fetchData]);
 
   // Derived stats
   const totals = {
@@ -225,6 +236,27 @@ export default function Dashboard() {
           🔄 Atualizar
         </button>
       </div>
+
+      {!isLocalDev && (
+        <div style={{
+          background:"#161b22", border:"1px solid #30363d", borderRadius:12,
+          padding:"16px 18px", marginBottom:16, fontSize:13, lineHeight:1.6, color:"#c9d1d9"
+        }}>
+          <div style={{ fontWeight:700, color:"#a5b4fc", marginBottom:8 }}>Visualização publicada (GitHub Pages)</div>
+          <div>
+            Os dados do Jira só carregam em desenvolvimento local, com a chave da API no arquivo <code style={{ color:"#fbbf24" }}>.env</code>.
+          </div>
+          <div style={{ marginTop:10, color:"#8b949e" }}>
+            No seu computador: <code style={{ color:"#e6edf3" }}>cd ~/Projects/dashboard-s10-jira && npm run dev</code>
+          </div>
+          <div style={{ marginTop:8 }}>
+            Relatório estático da sprint:{" "}
+            <a href="https://lenita-costa.github.io/dashboard-s10-fenasbac/" target="_blank" rel="noreferrer" style={{ color:"#60a5fa" }}>
+              dashboard-s10-fenasbac
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div style={{ display:"flex", gap:6, marginBottom:16 }}>
