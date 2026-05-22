@@ -32,10 +32,11 @@ Abra http://localhost:5173
 
 URL: https://lenita-costa.github.io/dashboard-s10-jira/
 
-No repositório, em **Settings → Pages**:
+No repositório, em **Settings → Pages → Build and deployment**:
 
-1. Em **Build and deployment → Source**, escolha **GitHub Actions** (não “Deploy from a branch”).
-2. Cada push na `main` roda o workflow e publica o build do Vite.
+1. **Source:** Deploy from a branch  
+2. **Branch:** `gh-pages` · pasta **`/ (root)`** (não use `main`)  
+3. Cada push na `main` roda o workflow, gera o build e atualiza a branch `gh-pages`.
 
 > **API Jira no Pages:** o proxy da Anthropic só existe no `npm run dev`. No site publicado o dashboard abre, mas buscar dados do Jira exige rodar localmente ou adicionar um backend depois.
 
